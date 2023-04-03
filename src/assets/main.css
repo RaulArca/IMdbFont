@@ -1,0 +1,19 @@
+html{
+    background: #2c3e50 ;
+
+}
+
+select{
+    color: cornflowerblue;
+    border-radius: 5px;
+    border: 3px solid cornflowerblue;
+
+}
+aside{
+
+    border: 3px solid cornflowerblue;
+    border-radius: 5px;
+}
+main{
+
+}
