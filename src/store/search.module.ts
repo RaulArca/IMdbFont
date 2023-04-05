@@ -7,6 +7,8 @@ declare module '@vue/runtime-core' {
          gridSelected: string
 
          showResults:boolean
+
+         showFilters: boolean
     }
 
 }
@@ -16,6 +18,8 @@ export const  searchModule : Module<StateSearch,any>= {
         isSearching: false,
         gridSelected:'cards',
         showResults:false,
+        showFilters:false,
+
 
     },
     actions:{
@@ -31,6 +35,9 @@ export const  searchModule : Module<StateSearch,any>= {
         setShowResult(state, value:boolean):void{
             state.showResults= value
         },
+        setShowFilters(state,value:boolean):void{
+            state.showFilters= value
+        }
     },
     getters:{
 
@@ -43,5 +50,8 @@ export const  searchModule : Module<StateSearch,any>= {
         getShowResults (state):boolean{
             return state.showResults
         },
+        getShowFilters(state):boolean{
+            return state.showFilters
+        }
     }
 }

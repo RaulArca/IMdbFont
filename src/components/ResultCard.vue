@@ -66,7 +66,7 @@ export default defineComponent({
     youtubekey :"ZS_8btMjx2U"
     }
   }
-  ,async beforeCreate() {
+  ,async mounted() {
     let movie: MovieRoot;
     let urlFind: string = "https://api.themoviedb.org/3/find/" + this.imdbId + "?api_key=06874088a2d1704a5a7018a3e1d000b3&language=en-US&external_source=imdb_id"
     let trailer: TrailerRoot

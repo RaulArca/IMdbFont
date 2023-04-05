@@ -9,6 +9,7 @@ import MovieCircle from "@/components/Movie-Circle.vue";
 import Flex from "@/components/Flex.vue";
 import ResultGrid from "@/components/ResultGrid.vue";
 import ResultCard from "@/components/ResultCard.vue";
+import FiltersAside from "@/components/filtersAside.vue";
 
 const isSearching = computed(() => {
   return store.getters['search/getIsSearching'];
@@ -20,6 +21,51 @@ const gridSelected = computed(() => {
 const showResults = computed(() => {
   return store.getters['search/getShowResults'];
 })
+const showFilters = computed(() => {
+  return store.getters['search/getShowFilters'];
+})
+export interface moviResult{
+  hits: Hit[]
+  facets: any[]
+  spellchecked: string
+}
+export interface Hit {
+  id: string
+  tconst: string
+  titleType: string
+  primaryTitle: string
+  originalTitle: string
+  isAdult: boolean
+  startYear: number
+  endYear: number
+  runtimeMinutes: number
+  genres: string[]
+  averageRating: number
+  numVotes: number
+  akas: Aka[]
+  directors: Director[]
+  starring: Starring[]
+}
+
+export interface Aka {
+  title: string
+  region: string
+  language: string
+  isOriginalTitle: boolean
+}
+
+export interface Director {
+  nconst: string
+}
+
+export interface Starring {
+  name: Name
+  characters: string
+}
+
+export interface Name {
+  nconst: string
+}
 
 const movies = [{id:1,score:6.3},
   {id:2,score:7},
@@ -44,11 +90,18 @@ const movies = [{id:1,score:6.3},
 <template>
 
   <header class="header">
-    <searchbar v-if="!showResults"/>
+    <searchbar v-if="!showResults "/>
   </header>
 
   <main class="app">
     <notifications />
+    <transition>
+    <aside v-if="!isSearching && !showResults&& showFilters">
+      <filters-aside>
+
+      </filters-aside>
+    </aside>
+    </transition>
     <transition>
       <grid v-if="gridSelected === 'cards' && !isSearching &&!showResults" >
         <movie-card
@@ -79,7 +132,7 @@ const movies = [{id:1,score:6.3},
 
     <transition>
       <ResultGrid  v-if="showResults">
-        <result-card  v-for="i in ['tt0137523','tt0266543','tt0033467']" v-bind:imdb-id="i" ></result-card>
+        <result-card  v-for="i in ['tt0137523','tt0266543','tt0119282','tt0114709','tt0068646']" v-bind:imdb-id="i" ></result-card>
       </ResultGrid>
     </transition>
 
