@@ -22,11 +22,11 @@ export default {
       let Card = document.getElementById(this.index)
       if(this.isSelected){
         this.isSelected=false;
-        Card.classList.add("active")
+        Card.classList.add("selected")
       }
       else {
         this.isSelected=true;
-        Card.classList.remove("active")
+        Card.classList.remove("selected")
       }
 
     }
@@ -43,12 +43,12 @@ export default {
   -ms-transition:all .9s ease; /* Opera */
   width:100%;
 }
-.active{
-  -webkit-transform:scale(1.25);
-  -moz-transform:scale(1.25);
-  -ms-transform:scale(1.25);
-  -o-transform:scale(1.25);
-  transform:scale(1.25);
+.selected{
+  -webkit-transform:scale(1.10);
+  -moz-transform:scale(1.10);
+  -ms-transform:scale(1.10);
+  -o-transform:scale(1.10);
+  transform:scale(1.10);
 }
 .flip-card{
   width: 180px;

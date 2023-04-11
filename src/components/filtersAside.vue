@@ -6,9 +6,10 @@
       <option v-for="i in [1,2,3,4,5,6,7]" v-bind:value="i" v-bind:content="i"> Categoria {{i}}</option>
     </select>
   </div>
-  <div class="filter">
+  <div class="filter slider">
     <label > DURATION</label>
-    <input class="filter--duration--slider" type="range" min="1" max="100" value="50">
+    <input id="durationSlider" class="filter--duration--slider" type="range" min="1" max="240" value="90" v-on:input="duration">
+    <label id="duration" class="slider--label"> 90 </label>
   </div>
   <div class="filter">
     <label > DATE</label>
@@ -19,9 +20,11 @@
     </div>
 
   </div>
-  <div class="filter">
+  <div class="filter slider">
+
     <label > SCORE</label>
-    <input class="filter--duration--slider" type="range" min="0" max="10" value="5">
+    <input id="scoreSlider" class="filter--duration--slider" type="range" min="0" max="10" value="5" v-on:input="score">
+    <label id="score" class="slider--label"> 5 </label>
   </div>
   <div class="filter">
     <label for="language"> LANGUAGE</label>
@@ -35,6 +38,18 @@
 <script>
 export default {
   name: "filtersAside"
+  , methods:{
+    duration(){
+      let label = document.getElementById("duration");
+      let slider = document.getElementById("durationSlider");
+      label.textContent= slider.value
+    },
+    score(){
+      let label = document.getElementById("score");
+      let slider = document.getElementById("scoreSlider");
+      label.textContent= slider.value
+    }
+  }
 }
 </script>
 
@@ -86,4 +101,11 @@ select{
   display: grid;
   grid-template-columns: repeat(8,180px);
   grid-gap: 15px;}
+.slider{
+  display: grid;
+  grid-template-columns: min-content;
+}
+.slider--label{
+  justify-self: center;
+}
 </style>

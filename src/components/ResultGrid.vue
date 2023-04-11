@@ -2,6 +2,7 @@
   <div class="slide-result">
     <div class="sliding">
       <button class="left direction" v-on:click="slide('left')"> &lt;</button>
+      <button class="top direction" v-on:click="exit()"> X</button>
       <div class="scroll" id="scroll" ref="scroll">
         <div class="item-list">
           <slot></slot>
@@ -13,6 +14,8 @@
 </template>
 
 <script>
+import {store} from "@/store/store";
+
 export default {
   name: "ResultGrid",
   methods:{
@@ -22,6 +25,9 @@ export default {
         divContent.scrollLeft += window.innerWidth;
       else
         divContent.scrollLeft -= window.innerWidth;
+    },
+    exit(){
+      store.commit("search/setShowResult",false)
     }
   }
 }
@@ -86,6 +92,11 @@ export default {
 .left {
   position: absolute;
   left: 10px;
+}
+.top{
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 .slider--category {
