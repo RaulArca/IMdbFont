@@ -4,7 +4,7 @@
       <button class = "button" v-on:click="showFilters" v-if="!isSearching"><font-awesome-icon icon="fa-solid fa-bars" /></button>
     </transition>
     <div class="relative" id="search">
-      <input class="input" placeholder="write to search" v-on:click="goToSearch"/>
+      <input class="input" placeholder="write to search" v-on:click="goToSearch" v-on:input="search($event.target.value)"/>
       <span id="input-manifying-glass" >
         <font-awesome-icon icon="fa-solid fa-magnifying-glass" style="color: #6495ed;" />
       </span>
@@ -48,14 +48,29 @@ export default defineComponent({
     },
     isFiltersShowed(){
       return store.getters['search/getShowFilters']
+    },
+    query(){
+      return store.getters["search/getQuery"];
+    },
+
+  },
+  watch:{
+    query() {
+      store.dispatch('search/searchByQuery');
+    },
+    movies(){
+      if (store.getters['search/getQuery']!=''){
+        this.notSearch()
+      }
+      else this.goToSearch();
     }
-
-
   },
   methods:{
     goToSearch(){
+      if(this.query==''){
         store.commit('search/setIsSearching', 'searching')
-      document.getElementById('search').style.gridColumn='1/3'
+        document.getElementById('search').style.gridColumn='1/3'
+      }
     },
     notSearch(){
       store.commit('search/setIsSearching', false)
@@ -83,7 +98,21 @@ export default defineComponent({
       else{
         store.commit("search/setShowFilters",true)
       }
+    },
+    search(value:string){
+      store.commit('search/setQuery', value);
+
+      store.commit('data/setMovies',[]);
+      if(value==""){
+        this.goToSearch()
+      }
+      else{
+        this.notSearch()
+      }
+      store.dispatch('search/searchByQuery')
+
     }
+
   }
 })
 </script>

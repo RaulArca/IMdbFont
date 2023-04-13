@@ -1,6 +1,6 @@
 <template >
-  <div class="flip-card" ref="card" v-bind:id="'circle'+movie.id" v-on:click="selectMovie">
-    <img  src="https://m.media-amazon.com/images/M/MV5BZGUzYTI3M2EtZmM0Yy00NGUyLWI4ODEtN2Q3ZGJlYzhhZjU3XkEyXkFqcGdeQXVyNTM0OTY1OQ@@._V1_QL75_UX280_CR0,0,280,414_.jpg" >
+  <div class="flip-card" ref="card" v-bind:id="'circle'+movieID" v-on:click="selectMovie">
+    <img v-bind:id="'img'+movieID">
   </div>
 </template>
 
@@ -12,7 +12,7 @@ import index from "vuex";
 
 export default{
   name: "Movie-Circle",
-  props:['movie'],
+  props:['movie', 'movieID'],
   data() {
     return {
       isSelected: false
@@ -27,11 +27,11 @@ export default{
       else if(size>400)
         size = 400
 
-      document.getElementById('circle'+this.movie.id).style.width=size.toString() + "px";
-      document.getElementById('circle'+this.movie.id).style.height=size.toString() +"px";
+      document.getElementById('circle'+this.movieID).style.width=size.toString() + "px";
+      document.getElementById('circle'+this.movieID).style.height=size.toString() +"px";
     },
     selectMovie(){
-      let Card = document.getElementById('circle'+this.movie.id)
+      let Card = document.getElementById('circle'+this.movieID)
       if(this.isSelected){
         this.isSelected=false;
         Card.classList.add("active")
@@ -44,7 +44,15 @@ export default{
     }
   },
   mounted() {
-    this.CircleSize(this.movie.score)
+    this.CircleSize(this.movie.averageRating)
+    let url = 'https://www.omdbapi.com/?apikey=e8bc51fe&i='+ this.movie.tconst
+    fetch(url)
+        .then(response => response.json())
+        .then(async data => {
+          document.getElementById("img"+this.movieID).src=data.Poster;
+        });
+
+
   }
 
 }

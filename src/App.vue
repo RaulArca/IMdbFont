@@ -3,7 +3,7 @@ import Searchbar from "@/components/searchbar.vue";
 import MovieCard from "@/components/Movie-Card.vue";
 import Grid from "@/components/Grid.vue";
 import Slider from "@/components/slider.vue";
-import {computed} from "vue";
+import {computed, onMounted} from "vue";
 import {store} from "@/store/store";
 import MovieCircle from "@/components/Movie-Circle.vue";
 import Flex from "@/components/Flex.vue";
@@ -24,13 +24,16 @@ const showResults = computed(() => {
 const showFilters = computed(() => {
   return store.getters['search/getShowFilters'];
 })
+const movies = computed(() => {
+  return store.getters['data/getMovies'];
+})
 export interface moviResult{
   hits: Hit[]
   facets: any[]
-  spellchecked: string
+  spellchecked: string| null
 }
 export interface Hit {
-  id: string
+  id: string| null
   tconst: string
   titleType: string
   primaryTitle: string
@@ -67,23 +70,14 @@ export interface Name {
   nconst: string
 }
 
-const movies = [{id:1,score:6.3},
-  {id:2,score:7},
-  {id:3,score:5},
-  {id:4,score:8.5},
-  {id:5,score:6},
-  {id:6,score:6.6},
-  {id:7,score:9.3},
-  {id:8,score:7.7},
-  {id:9,score:3},
-  {id:10,score:6.5},
-  {id:11,score:5.9},
-  {id:12,score:7.4},
-  {id:13,score:7.2},
-  {id:16,score:6},
 
+function  setMovies(movies:Hit[]){
+  store.commit('data/setMovies', movies)
+}
 
-]
+onMounted(() => {
+  store.dispatch('search/searchByQuery')
+})
 </script>
 
 
@@ -105,7 +99,7 @@ const movies = [{id:1,score:6.3},
     <transition>
       <grid v-if="gridSelected === 'cards' && !isSearching &&!showResults" >
         <movie-card
-            v-for="i in movies" v-bind:index=i.id>
+            v-for="i in movies" v-bind:movie=i v-bind:movie-i-d="i.tconst">
         </movie-card>
       </grid>
 
@@ -114,7 +108,7 @@ const movies = [{id:1,score:6.3},
       <div class="circlesGrid" v-if="!isSearching &&!showResults" >
       <div class="grid " data-masonry='{ "itemSelector": ".grid-item", "columnWidth": 150 }' v-if="gridSelected==='circles'" >
         <movie-circle class = "grid-item"
-            v-for="i in movies" v-bind:movie=i >
+                      v-for="i in movies" v-bind:movie=i v-bind:movie-i-d="'movieCircle'+i.tconst">
         </movie-circle>
       </div>
       </div>
@@ -122,9 +116,9 @@ const movies = [{id:1,score:6.3},
 
     <transition>
       <div>
-        <slider v-for="x in [1,12,13,14,15]" v-if="isSearching &&!showResults">
+        <slider v-for="x in ['Horror','Action','Comedy','Drama']" v-if="isSearching &&!showResults">
           <movie-card
-              v-for="i in movies" v-bind:index="x+ ' '+ i.id"></movie-card>
+              v-for="i in [1,2,3,4,5,6,7,8]" v-bind:movie=movies[i] v-bind:movie-i-d="x+movies[i].tconst"></movie-card>
         </slider>
       </div>
 
@@ -132,7 +126,7 @@ const movies = [{id:1,score:6.3},
 
     <transition>
       <ResultGrid  v-if="showResults">
-        <result-card  v-for="i in ['tt0137523','tt0266543','tt0119282','tt0114709','tt0068646']" v-bind:imdb-id="i" ></result-card>
+        <result-card  v-for="i in [0,1,2,3,4,5,6]" v-bind:movie="movies[i]" ></result-card>
       </ResultGrid>
     </transition>
 
