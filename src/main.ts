@@ -10,10 +10,10 @@ import Notifications from '@kyvg/vue3-notification'
 
 
 /* import specific icons */
-import { faUserSecret, faMagnifyingGlass,faXmark, faStar,faGrip,faBraille,faBars} from '@fortawesome/free-solid-svg-icons'
+import { faUserSecret, faMagnifyingGlass,faXmark, faStar,faGrip,faBraille,faBars,faCompass,faHeart} from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
-library.add(faUserSecret, faMagnifyingGlass,faXmark,faStar,faGrip,faBraille,faBars)
+library.add(faUserSecret, faMagnifyingGlass,faXmark,faStar,faGrip,faBraille,faBars,faCompass,faHeart)
 import {store} from "@/store/store";
 
 createApp(App)

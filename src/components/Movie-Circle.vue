@@ -1,6 +1,12 @@
 <template >
   <div class="flip-card" ref="card" v-bind:id="'circle'+movieID" v-on:click="selectMovie">
+    <transition>
+    <div class="visible" v-if="isSelected">
+      <font-awesome-icon icon="fa-solid fa-heart" size="2xl" style="color: #43c78d;"/>
+    </div>
+    </transition>
     <img v-bind:id="'img'+movieID">
+
   </div>
 </template>
 
@@ -31,30 +37,50 @@ export default{
       document.getElementById('circle'+this.movieID).style.height=size.toString() +"px";
     },
     selectMovie(){
-      let Card = document.getElementById('circle'+this.movieID)
       if(this.isSelected){
         this.isSelected=false;
-        Card.classList.add("active")
+        store.commit('data/removeMovieSelected', this.movie)
       }
       else {
         this.isSelected=true;
-        Card.classList.remove("active")
+        store.commit('data/addMovieSelected', this.movie)
       }
 
     }
   },
   mounted() {
-    this.CircleSize(this.movie.averageRating)
-    let url = 'https://www.omdbapi.com/?apikey=e8bc51fe&i='+ this.movie.tconst
+
+    let url = 'https://api.themoviedb.org/3/find/' + this.movie.tconst +
+        '?api_key=06874088a2d1704a5a7018a3e1d000b3&language=en-US&external_source=imdb_id'
+
+
+    let imageNotFoundurl = 'https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-1-scaled.png'
     fetch(url)
         .then(response => response.json())
         .then(async data => {
-          document.getElementById("img"+this.movieID).src=data.Poster;
+          let selected = store.getters["data/getMoviesSelected"]
+          let urlImage = ''
+          if (data.tv_results[0] != null && data.tv_results[0] != undefined && data.tv_results[0].poster_path) {
+            urlImage = 'https://image.tmdb.org/t/p/original' + data.tv_results[0].poster_path
+          } else if (data.movie_results[0] != null && data.movie_results[0] != undefined && data.movie_results[0].poster_path) {
+            urlImage = 'https://image.tmdb.org/t/p/original' + data.movie_results[0].poster_path
+          } else if (data.person_results[0] != null && data.person_results[0] != undefined && data.person_results[0].poster_path) {
+            urlImage = 'https://image.tmdb.org/t/p/original' + data.person_results[0].poster_path
+          } else if (data.tv_episode_results[0] != null && data.tv_episode_results[0] != undefined && data.tv_episode_results[0].poster_path) {
+            urlImage = 'https://image.tmdb.org/t/p/original' + data.tv_episode_results[0].poster_path
+          } else if (data.tv_season_results[0] != null && data.tv_season_results[0] != undefined && data.tv_season_results[0].poster_path) {
+            urlImage = 'https://image.tmdb.org/t/p/original' + data.tv_season_results[0].poster_path
+          } else {
+            urlImage = imageNotFoundurl;
+          }
+
+          if(selected.includes(this.movie)){
+            this.$data.isSelected=true
+          }
+          document.getElementById("img" + this.movieID).src = urlImage
+          this.CircleSize(this.movie.averageRating)
         });
-
-
   }
-
 }
 </script>
 
@@ -67,13 +93,22 @@ export default{
   background:beige ;
   align-content: center;
   color: #2c3e50;
-  margin: 10px 10px 10px 10px
+  margin: 10px 10px 10px 10px;
+  position: relative;
 }
 img{
   padding: 0 0 0 0 ;
   width: 100%;
   height: 100%;
   border-radius: 200000px;
+}
+
+.visible{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.8;
 }
 .active{
   -webkit-transform:scale(1.25);

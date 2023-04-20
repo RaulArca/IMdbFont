@@ -15,7 +15,7 @@
       <button id="button--card--grid" class="button" v-if="gridSelected==='circles' && !isSearching" v-on:click="cardsGrid"><font-awesome-icon icon="fa-solid fa-grip" bounce /></button>
     </transition>
     <transition>
-      <button id="button--circles--grid" class="button" v-if="gridSelected==='cards' && !isSearching" v-on:click="circlesGrid"><font-awesome-icon icon="fa-sharp fa-light fa-braille" flip="both" bounce /></button>
+      <button id="button--circles--grid" class="button" v-if="gridSelected==='cards' && !isSearching" v-on:click="circlesGrid"><font-awesome-icon icon="fa-solid fa-compass" /></button>
     </transition>
     <!-- botones para la busqueda-->
     <transition>
@@ -68,7 +68,7 @@ export default defineComponent({
   methods:{
     goToSearch(){
       if(this.query==''){
-        store.commit('search/setIsSearching', 'searching')
+        store.commit('search/setIsSearching', true)
         document.getElementById('search').style.gridColumn='1/3'
       }
     },
@@ -89,8 +89,11 @@ export default defineComponent({
       store.commit('search/setGridSelected','cards')
     },
     showResults(){
+      store.dispatch("search/postData")
       store.commit("search/setShowResult",true)
     },
+
+
     showFilters(){
       if(this.isFiltersShowed){
         store.commit("search/setShowFilters",false)

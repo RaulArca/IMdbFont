@@ -1,6 +1,6 @@
 <template>
   <div class="slide">
-    <h3 class=" slider--category">Categoria</h3>
+    <h3 class=" slider--category">{{category}}</h3>
     <div class="sliding">
       <button class="left direction" v-on:click="slide('left')"> &lt;</button>
       <div class="scroll" id="scroll" ref="scroll">
@@ -16,6 +16,7 @@
 <script lang="js">
 export default {
   name: "slider",
+  props:['category'],
 
   methods: {
     slide(direction) {

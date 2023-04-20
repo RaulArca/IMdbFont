@@ -27,6 +27,7 @@ export default {
         divContent.scrollLeft -= window.innerWidth;
     },
     exit(){
+      store.commit('data/setRecomendedMovies', [])
       store.commit("search/setShowResult",false)
     }
   }

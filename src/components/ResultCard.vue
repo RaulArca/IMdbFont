@@ -1,5 +1,5 @@
 <template>
-<div style="width: 101vw ; height: 97vh">
+<div style="width: 101vw ; height: 97vh" v-bind:class="{ visible: isVisible }">
   <iframe
       width="100%" height="100%"
 
@@ -13,6 +13,8 @@
 </template>
 
 <script lang="ts">
+ import {store} from "@/store/store";
+
  interface MovieRoot {
   movie_results: MovieResult[]
   person_results: any[]
@@ -157,40 +159,62 @@ export default defineComponent({
 
   name: "ResultCard",
   props:['movie'],
+  computed:{
+    isVisible():boolean{
+      return this.$data.notVisible;
+    },
+  },
   data() {
     return {
-    youtubekey :"ZS_8btMjx2U"
+      youtubekey :"WBQGrEaxegk",
+      notVisible:false
     }
   }
   ,async mounted() {
-    let movie: MovieRoot;
+
     let urlFind: string = "https://api.themoviedb.org/3/find/" + this.movie.tconst + "?api_key=06874088a2d1704a5a7018a3e1d000b3&language=en-US&external_source=imdb_id"
     let trailer: TrailerRoot
 
     await fetch(urlFind)
         .then(response => response.json())
         .then(async data => {
+          let movie: MovieRoot = data
           if(this.movie.titleType=='tvSeries'){
-            movie = data
-            let id: number = movie.tv_results[0].id
-            let url: string = "https://api.themoviedb.org/3/tv/" + id + '/videos?api_key=06874088a2d1704a5a7018a3e1d000b3'
-            await fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                  trailer = data
-                  this.youtubekey= trailer.results[0].key.toString();
-                });
+
+            if(movie.tv_results[0]!=null&&movie.tv_results[0]!=undefined){
+              let id: number = movie.tv_results[0].id
+              let url: string = "https://api.themoviedb.org/3/tv/" + id + '/videos?api_key=06874088a2d1704a5a7018a3e1d000b3'
+              await fetch(url)
+                  .then(response => response.json())
+                  .then(data => {
+                    trailer = data
+                    if(trailer.results[0]!= null && trailer.results[0]!= undefined)
+                      this.youtubekey= trailer.results[0].key.toString();
+                    else {
+                      this.notVisible=true;
+                    }
+
+                  });
+            }
+            else {
+              this.notVisible=true
+            }
           }
           else{
-            movie = data
-            let id: number = movie.movie_results[0].id
-            let url: string = "https://api.themoviedb.org/3/movie/" + id + '/videos?api_key=06874088a2d1704a5a7018a3e1d000b3'
-            await fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                  trailer = data
-                  this.youtubekey= trailer.results[0].key.toString();
-                });
+            if(movie.movie_results[0]!=null&&movie.movie_results[0]!=undefined){
+              let id: number = movie.movie_results[0].id
+              let url: string = "https://api.themoviedb.org/3/movie/" + id + '/videos?api_key=06874088a2d1704a5a7018a3e1d000b3'
+              await fetch(url)
+                  .then(response => response.json())
+                  .then(data => {
+                    trailer = data
+                    if(trailer.results[0]!= null && trailer.results[0]!= undefined)
+                      this.youtubekey= trailer.results[0].key.toString();
+                    else this.notVisible=true;
+                  });
+            }
+            else this.notVisible=true
+
           }
 
         });
@@ -199,6 +223,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+.visible{
+  display: none;
+}
 
 </style>

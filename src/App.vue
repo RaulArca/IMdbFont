@@ -27,10 +27,23 @@ const showFilters = computed(() => {
 const movies = computed(() => {
   return store.getters['data/getMovies'];
 })
+const selectedMovies = computed(() => {
+  return store.getters['data/getMoviesSelected'];
+})
+const Catmovies = computed(() => {
+  return store.getters['data/getCategoryMovies'];
+})
+const recomendedMovies = computed(() => {
+  return store.getters['data/getRecomendedMovies'];
+})
 export interface moviResult{
   hits: Hit[]
   facets: any[]
   spellchecked: string| null
+}
+export interface categoryMovies {
+  category:string,
+  movies: Hit[]
 }
 export interface Hit {
   id: string| null
@@ -77,6 +90,8 @@ function  setMovies(movies:Hit[]){
 
 onMounted(() => {
   store.dispatch('search/searchByQuery')
+  store.dispatch('search/searchByCategory')
+
 })
 </script>
 
@@ -90,14 +105,14 @@ onMounted(() => {
   <main class="app">
     <notifications />
     <transition>
-    <aside v-if="!isSearching && !showResults&& showFilters">
-      <filters-aside>
+      <aside v-if="!isSearching && !showResults&& showFilters">
+        <filters-aside>
 
-      </filters-aside>
-    </aside>
+        </filters-aside>
+      </aside>
     </transition>
     <transition>
-      <grid v-if="gridSelected === 'cards' && !isSearching &&!showResults" >
+      <grid v-if="gridSelected === 'cards' && !isSearching &&!showResults">
         <movie-card
             v-for="i in movies" v-bind:movie=i v-bind:movie-i-d="i.tconst">
         </movie-card>
@@ -108,7 +123,7 @@ onMounted(() => {
       <div class="circlesGrid" v-if="!isSearching &&!showResults" >
       <div class="grid " data-masonry='{ "itemSelector": ".grid-item", "columnWidth": 150 }' v-if="gridSelected==='circles'" >
         <movie-circle class = "grid-item"
-                      v-for="i in movies" v-bind:movie=i v-bind:movie-i-d="'movieCircle'+i.tconst">
+          v-for="i in movies" v-bind:movie=i v-bind:movie-i-d="'movieCircle'+i.tconst">
         </movie-circle>
       </div>
       </div>
@@ -116,17 +131,18 @@ onMounted(() => {
 
     <transition>
       <div>
-        <slider v-for="x in ['Horror','Action','Comedy','Drama']" v-if="isSearching &&!showResults">
+        <slider v-for="x in Catmovies" v-if="isSearching &&!showResults" v-bind:category="x.category">
           <movie-card
-              v-for="i in [1,2,3,4,5,6,7,8]" v-bind:movie=movies[i] v-bind:movie-i-d="x+movies[i].tconst"></movie-card>
+              v-for="i in x.movies" v-bind:movie=i v-bind:movie-i-d="x.category+i.tconst">
+
+          </movie-card>
         </slider>
       </div>
-
     </transition>
 
     <transition>
       <ResultGrid  v-if="showResults">
-        <result-card  v-for="i in [0,1,2,3,4,5,6]" v-bind:movie="movies[i]" ></result-card>
+        <result-card  v-for="i in recomendedMovies" v-bind:movie="i" ></result-card>
       </ResultGrid>
     </transition>
 

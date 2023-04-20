@@ -1,7 +1,7 @@
 import type {Module} from "vuex";
 
 import type {StateSearch} from "@vue/runtime-core";
-import type {Hit} from "@/App.vue";
+import type {Hit, categoryMovies, moviResult} from "@/App.vue";
 import type {RootState} from "@/store/store";
 declare module '@vue/runtime-core' {
      interface StateSearch {
@@ -13,6 +13,14 @@ declare module '@vue/runtime-core' {
          showFilters: boolean
 
          query:string
+
+         filters:{
+             categories: string,
+             duration: number,
+             releaseYearFrom:number,
+             releaseYearTo:number,
+             score:number,
+         }
     }
 
 }
@@ -24,7 +32,14 @@ export const  searchModule : Module<StateSearch,RootState>= {
         showResults:false,
         showFilters:false,
         query:'',
-
+        filters:{
+            categories:'',
+            duration: 0,
+            releaseYearFrom:0,
+            releaseYearTo:0,
+            score:0,
+            }
+        }
 
     },
     actions:{
@@ -35,16 +50,103 @@ export const  searchModule : Module<StateSearch,RootState>= {
                 fetch(url)
                     .then(response => response.json())
                     .then(async data => {
-                        //let result: moviResult = data;
+                        let result: moviResult = data.hits;
                         //setMovies(result.hits)
-                        let result: Hit[] = data;
+                       // let result: Hit[] = data;
                         commit('data/setMovies',result, {root: true})
 
                     });
             } catch (error) {
-                commit('setCharacters', []);
-                commit('setEpisodes', []);
+
             }
+        },
+        async postData({commit, rootGetters}) {
+            let url ='http://localhost:8080/movies/recommended'
+            // Default options are marked with *
+            const aux = fetch(url, {
+                method: "POST", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, *cors, same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: "follow", // manual, *follow, error
+                referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify(rootGetters['data/getMoviesSelected']), // body data type must match "Content-Type" header
+            }).then(response => response.json())
+                .then(async data => {
+                    let result: Hit[] = data.hits;
+                    //setMovies(result.hits)
+                    // let result: Hit[] = data;
+                    commit('data/setRecomendedMovies',result, {root: true})
+
+                });
+        },
+        async searchByCategory({commit}) {
+            let urlComedy = 'http://localhost:8080/movies/genre/Comedy';
+            let urlDrama = 'http://localhost:8080/movies/genre/Drama';
+            let urlHorror = 'http://localhost:8080/movies/genre/Horror';
+            let urlAction = 'http://localhost:8080/movies/genre/Action';
+            try {
+                fetch(urlComedy)
+                    .then(response => response.json())
+                    .then(async data => {
+                        let hits: Hit = data.hits;
+
+                        let result: categoryMovies = {category:'', movies:[]}
+                        result.category= 'Comedy'
+                            result.movies = hits
+                        //setMovies(result.hits)
+                        // let result: Hit[] = data;
+                        commit('data/addCategoryMovies',result, {root: true})
+
+                    });
+                fetch(urlDrama)
+                    .then(response => response.json())
+                    .then(async data => {
+                        let hits: Hit = data.hits;
+
+                        let result: categoryMovies = {category:'', movies:[]}
+                        result.category= 'Drama'
+                        result.movies = hits
+                        //setMovies(result.hits)
+                        // let result: Hit[] = data;
+                        commit('data/addCategoryMovies',result, {root: true})
+
+                    });
+                fetch(urlHorror)
+                    .then(response => response.json())
+                    .then(async data => {
+                        let hits: Hit = data.hits;
+
+                        let result: categoryMovies = {category:'', movies:[]}
+                        result.category= 'Horror'
+                        result.movies = hits
+                        //setMovies(result.hits)
+                        // let result: Hit[] = data;
+                        commit('data/addCategoryMovies',result, {root: true})
+
+                    });
+                fetch(urlAction)
+                    .then(response => response.json())
+                    .then(async data => {
+                        let hits: Hit = data.hits;
+                        let result: categoryMovies = {category:'', movies:[]}
+                        result.category= 'Action'
+                        result.movies = hits
+                        //setMovies(result.hits)
+                        // let result: Hit[] = data;
+                        commit('data/addCategoryMovies',result, {root: true})
+
+                    });
+            } catch (error) {
+
+            }
+
+
+
         },
     },
     mutations: {
@@ -73,6 +175,7 @@ export const  searchModule : Module<StateSearch,RootState>= {
         getIsSearching (state):boolean{
             return state.isSearching
         },
+
         getGridSelected(state):string{
           return state.gridSelected
         },

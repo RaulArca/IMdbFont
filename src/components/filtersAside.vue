@@ -1,4 +1,5 @@
 <template>
+  <div class="absolute">
   <h3>FILTERS</h3>
   <div class="filter">
     <label for="categories"> CATEGORIES</label>
@@ -12,7 +13,7 @@
     <label id="duration" class="slider--label"> 90 </label>
   </div>
   <div class="filter">
-    <label > DATE</label>
+    <label > RELEASE YEAR</label>
     <div class="dates">
       <label for="dateFrom">FROM</label>
       <label for="dateTo">TO</label>
@@ -32,7 +33,7 @@
       <option v-for="i in [1,2,3,4,5,6,7]" v-bind:value="i" v-bind:content="i"> language {{i}}</option>
     </select>
   </div>
-
+  </div>
 </template>
 
 <script>
@@ -107,5 +108,8 @@ select{
 }
 .slider--label{
   justify-self: center;
+}
+.absolute{
+  position: absolute;
 }
 </style>
