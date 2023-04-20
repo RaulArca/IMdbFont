@@ -3,53 +3,69 @@
   <h3>FILTERS</h3>
   <div class="filter">
     <label for="categories"> CATEGORIES</label>
-    <select id="categories">
-      <option v-for="i in [1,2,3,4,5,6,7]" v-bind:value="i" v-bind:content="i"> Categoria {{i}}</option>
+    <select id="categories" v-on:change="category($event.target.value)">
+      <option v-for="i in ['','Adventure','Comedy','Drama','Crime','Thriller','Biography','Horror','Mistery','Sci-Fy','Action','Documentary']" v-bind:value="i" v-bind:content="i" >{{i}}</option>
     </select>
   </div>
   <div class="filter slider">
     <label > DURATION</label>
-    <input id="durationSlider" class="filter--duration--slider" type="range" min="1" max="240" value="90" v-on:input="duration">
-    <label id="duration" class="slider--label"> 90 </label>
+    <input id="durationSlider" class="filter--duration--slider" type="range" min="0" max="240" value="0" v-on:input="duration">
+    <label id="duration" class="slider--label"> 0 </label>
   </div>
   <div class="filter">
     <label > RELEASE YEAR</label>
     <div class="dates">
       <label for="dateFrom">FROM</label>
       <label for="dateTo">TO</label>
-      <input id = "dateFrom" type="number" min="1890" max="2023" ><input id="dateTo" type="number" min="1890" max="2023">
+      <input v-on:input="dateFrom($event.target.value)" id = "dateFrom" type="number" min="1890" max="2023"><input v-on:input="dateTo($event.target.value)" id="dateTo" type="number" min="1890" max="2023">
     </div>
 
   </div>
   <div class="filter slider">
 
     <label > SCORE</label>
-    <input id="scoreSlider" class="filter--duration--slider" type="range" min="0" max="10" value="5" v-on:input="score">
-    <label id="score" class="slider--label"> 5 </label>
-  </div>
-  <div class="filter">
-    <label for="language"> LANGUAGE</label>
-    <select id="language">
-      <option v-for="i in [1,2,3,4,5,6,7]" v-bind:value="i" v-bind:content="i"> language {{i}}</option>
-    </select>
+    <input id="scoreSlider" class="filter--duration--slider" type="range" min="0" max="10" value="0" v-on:input="score">
+    <label id="score" class="slider--label"> 0 </label>
   </div>
   </div>
 </template>
 
 <script>
+import {store} from "@/store/store";
+
 export default {
   name: "filtersAside"
+
   , methods:{
     duration(){
       let label = document.getElementById("duration");
       let slider = document.getElementById("durationSlider");
       label.textContent= slider.value
+      store.commit('search/setDuration', slider.value,{root: true});
+      store.dispatch('search/searchByQuery')
     },
     score(){
       let label = document.getElementById("score");
       let slider = document.getElementById("scoreSlider");
       label.textContent= slider.value
+      store.commit('search/setScore',slider.value,{root:true})
+      store.dispatch('search/searchByQuery')
+
+    },
+    category(value){
+      store.commit('search/setCategory',value,{root:true})
+      store.dispatch('search/searchByQuery')
     }
+    ,
+    dateFrom(value){
+      store.commit('search/setReleaseYearFrom',value,{root:true})
+      store.dispatch('search/searchByQuery')
+    },
+    dateTo(value){
+      store.commit('search/setReleaseYearTo',value,{root:true})
+      store.dispatch('search/searchByQuery')
+    }
+
   }
 }
 </script>

@@ -15,6 +15,7 @@ const isSearching = computed(() => {
   return store.getters['search/getIsSearching'];
 })
 
+
 const gridSelected = computed(() => {
   return store.getters['search/getGridSelected'];
 })
@@ -113,9 +114,11 @@ onMounted(() => {
     </transition>
     <transition>
       <grid v-if="gridSelected === 'cards' && !isSearching &&!showResults">
-        <movie-card
+        <transition-group  name="card">
+        <movie-card class="card"
             v-for="i in movies" v-bind:movie=i v-bind:movie-i-d="i.tconst">
         </movie-card>
+        </transition-group>
       </grid>
 
     </transition>
@@ -173,5 +176,36 @@ onMounted(() => {
 }
 .grid-item {
   float:left  ;
+}
+.card {
+  transition: all 0.6s;
+
+}
+.card-enter, .card-leave-to
+  /* .card-leave-active for <2.1.8 */ {
+  opacity: 0;
+  transform: scale(0);
+}
+.card-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.card-leave-active {
+  /*position: absolute;*/
+}
+
+.card-move {
+  opacity: 1;
+  transition: all 0.5s;
+}
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

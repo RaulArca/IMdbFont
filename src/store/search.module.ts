@@ -38,13 +38,21 @@ export const  searchModule : Module<StateSearch,RootState>= {
             releaseYearFrom:0,
             releaseYearTo:0,
             score:0,
-            }
+
         }
+
 
     },
     actions:{
         async searchByQuery({commit, rootGetters}) {
-            let url = 'http://localhost:8080/movies' + rootGetters['search/getQuery'];
+            let url = 'http://localhost:8080/movies/search?' +
+                    (rootGetters['search/getQuery'] ?  'query='+rootGetters['search/getQuery']+'&' : '')+
+                    (rootGetters['search/getFilters'].categories ? 'genre=' + rootGetters['search/getFilters'].categories+'&'   : '')+
+                    (rootGetters['search/getFilters'].duration ? 'maxDuration=' + rootGetters['search/getFilters'].duration+'&'  : '')+
+                    (rootGetters['search/getFilters'].releaseYearFrom ? 'minDate=' + rootGetters['search/getFilters'].releaseYearFrom +'&' : '')+
+                    (rootGetters['search/getFilters'].releaseYearTo ? 'maxDate=' + rootGetters['search/getFilters'].releaseYearTo+'&'  : '')+
+                    (rootGetters['search/getFilters'].score ? 'minScore=' + rootGetters['search/getFilters'].score+'&'  : '');
+
 
             try {
                 fetch(url)
@@ -85,10 +93,10 @@ export const  searchModule : Module<StateSearch,RootState>= {
                 });
         },
         async searchByCategory({commit}) {
-            let urlComedy = 'http://localhost:8080/movies/genre/Comedy';
-            let urlDrama = 'http://localhost:8080/movies/genre/Drama';
-            let urlHorror = 'http://localhost:8080/movies/genre/Horror';
-            let urlAction = 'http://localhost:8080/movies/genre/Action';
+            let urlComedy = 'http://localhost:8080/movies/genres?genre=Comedy';
+            let urlDrama = 'http://localhost:8080/movies/genres?genre=Drama';
+            let urlHorror = 'http://localhost:8080/movies/genres?genre=Horror';
+            let urlAction = 'http://localhost:8080/movies/genres?genre=Action';
             try {
                 fetch(urlComedy)
                     .then(response => response.json())
@@ -163,12 +171,24 @@ export const  searchModule : Module<StateSearch,RootState>= {
             state.showFilters= value
         },
         setQuery(state, value:string):void{
-            if(value=='')
-            state.query= value
-            else{
-                state.query='/'+ value
-            }
+           state.query=value
         },
+
+        setCategory(state,value:string):void{
+            state.filters.categories= value
+        },
+        setDuration(state,value:number):void{
+            state.filters.duration= value;
+        },
+        setReleaseYearFrom(state,value:number):void{
+            state.filters.releaseYearFrom=value
+        },
+        setReleaseYearTo(state,value:number):void{
+            state.filters.releaseYearTo=value;
+        },
+        setScore(state,value:number):void{
+            state.filters.score= value;
+        }
     },
     getters:{
 
@@ -188,5 +208,8 @@ export const  searchModule : Module<StateSearch,RootState>= {
         getQuery(state):string{
             return state.query
         },
+        getFilters(state){
+            return state.filters
+        }
     }
 }
