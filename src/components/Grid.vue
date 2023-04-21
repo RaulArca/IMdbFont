@@ -1,11 +1,18 @@
 <template>
-<div class="template-grid">
+<div class="template-grid" v-bind:class="{ showFilters: showFilters }">
     <slot></slot>
 </div>
 </template>
 
 <script lang="ts">
+import {store} from "@/store/store";
+
 export default {
+  computed:{
+    showFilters(){
+      return store.getters['search/getShowFilters']
+    }
+  },
   name: "Grid"
 }
 
@@ -14,9 +21,12 @@ export default {
 <style>
 .template-grid{
   display: grid;
-  grid-template-columns: repeat(6,180px);
+  grid-template-columns: repeat(7,180px);
   grid-gap: 15px;
   justify-content: center;
+}
+.template-grid.showFilters{
+  grid-template-columns: repeat(5,180px);
 }
 .v-enter-active,
 .v-leave-active {

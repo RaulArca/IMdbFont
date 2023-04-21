@@ -4,7 +4,7 @@
       <button class = "button" v-on:click="showFilters" v-if="!isSearching"><font-awesome-icon icon="fa-solid fa-bars" /></button>
     </transition>
     <div class="relative" id="search">
-      <input class="input" placeholder="write to search" v-on:click="goToSearch" v-on:input="search($event.target.value)"/>
+      <input class="input" placeholder="write to search" v-on:click="goToSearch" v-on:input="clickedFn($event.target.value)"/>
       <span id="input-manifying-glass" >
         <font-awesome-icon icon="fa-solid fa-magnifying-glass" style="color: #6495ed;" />
       </span>
@@ -31,12 +31,17 @@
 import {store} from "@/store/store";
 import {defineComponent} from "vue";
 import { notify } from "@kyvg/vue3-notification";
+import { useDebounceFn } from '@vueuse/core'
 export default defineComponent({
   name: "searchbar",
   data() {
     return {
       dismissSecs: 10,
       dismissCountDown: 0,
+      debouncedFn: useDebounceFn((value:string) => {
+        this.search(value)
+    }, 1000, { maxWait: 5000 })
+
     }
   },
   computed:{
@@ -75,6 +80,9 @@ export default defineComponent({
     notSearch(){
       store.commit('search/setIsSearching', false)
       document.getElementById('search').style.gridColumn='2/3'
+    },
+    clickedFn(value:string) {
+      this.debouncedFn(value)
     },
     circlesGrid(){
 
@@ -118,6 +126,10 @@ export default defineComponent({
 
   }
 })
+
+function debounce(arg0: (value: any) => void) {
+    throw new Error("Function not implemented.");
+}
 </script>
 
 <style scoped>

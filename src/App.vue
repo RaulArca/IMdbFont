@@ -48,6 +48,9 @@ export interface categoryMovies {
 }
 export interface Hit {
   id: string| null
+  image?: string;
+
+  youtubekey?:string;
   tconst: string
   titleType: string
   primaryTitle: string

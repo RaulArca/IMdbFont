@@ -1,7 +1,7 @@
 <template>
-  <div class="flip-card" v-on:click="selectMovie" ref="card" v-bind:id="movieID" :class="{'selected': isSelected}">
+  <div class="flip-card" v-on:click="selectMovie" ref="card" v-bind:id="movieID" :class="{'visible': isSelected}">
 
-    <img v-bind:id="'poster'+movieID" >
+    <img v-bind:id="'poster'+movieID" v-bind:src="movie.image">
 
     <h3 class="flip-card--title">{{movie.originalTitle}}</h3>
     <!--
@@ -38,49 +38,19 @@ export default {
         this.isSelected=true;
         store.commit('data/addMovieSelected', this.movie)
       }
+    },
+  },
+  mounted() {
+    let selected = store.getters["data/getMoviesSelected"]
+    if(selected.includes(this.movie)){
+      this.isSelected=true
     }
-  },mounted() {
-
-    let url = 'https://api.themoviedb.org/3/find/'+this.movie.tconst+
-        '?api_key=06874088a2d1704a5a7018a3e1d000b3&language=en-US&external_source=imdb_id'
-
-
-    let imageNotFoundurl ='https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-1-scaled.png'
-    fetch(url)
-        .then(response => response.json())
-        .then(async data => {
-          let selected = store.getters["data/getMoviesSelected"]
-          let urlImage = ''
-          if(data.tv_results[0]!= null  && data.tv_results[0]!=undefined && data.tv_results[0].poster_path){
-            urlImage = 'https://image.tmdb.org/t/p/original'+data.tv_results[0].poster_path
-          }
-          else if(data.movie_results[0]!=null  && data.movie_results[0]!= undefined  &&data.movie_results[0].poster_path) {
-            urlImage = 'https://image.tmdb.org/t/p/original'+data.movie_results[0].poster_path
-          }
-          else if(data.person_results[0]!= null  && data.person_results[0]!=undefined && data.person_results[0].poster_path){
-            urlImage = 'https://image.tmdb.org/t/p/original'+data.person_results[0].poster_path
-          }
-          else if(data.tv_episode_results[0]!=null  && data.tv_episode_results[0]!= undefined && data.tv_episode_results[0].poster_path) {
-            urlImage = 'https://image.tmdb.org/t/p/original'+data.tv_episode_results[0].poster_path
-          }
-          else if(data.tv_season_results[0]!=null && data.tv_season_results[0]!= undefined && data.tv_season_results[0].poster_path)  {
-            urlImage = 'https://image.tmdb.org/t/p/original'+data.tv_season_results[0].poster_path
-          }
-          else{
-            urlImage= imageNotFoundurl;
-          }
-
-          if(selected.includes(this.movie)){
-            this.$data.isSelected=true
-          }
-
-          document.getElementById("poster"+this.movieID).src=urlImage
-          document.getElementById("poster"+this.movieID).width=180;
-          document.getElementById("poster"+this.movieID).height=250
-        });
-
-
-
+  },
+  beforeUpdate() {
+    let selected = store.getters["data/getMoviesSelected"]
+    if(selected.includes(this.movie)){
+      this.isSelected=true
+    }
   }
 }
 </script>
@@ -94,7 +64,7 @@ export default {
   -ms-transition:all .9s ease; /* Opera */
   width:100%;
 }
-.selected{
+.visible{
   -webkit-transform:scale(1.10);
   -moz-transform:scale(1.10);
   -ms-transform:scale(1.10);

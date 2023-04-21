@@ -1,12 +1,28 @@
 <template >
+  <!--
   <div class="flip-card" ref="card" v-bind:id="'circle'+movieID" v-on:click="selectMovie">
-    <transition>
     <div class="visible" v-if="isSelected">
       <font-awesome-icon icon="fa-solid fa-heart" size="2xl" style="color: #43c78d;"/>
     </div>
-    </transition>
     <img v-bind:id="'img'+movieID">
 
+  </div>-->
+  <div class="flip-card" ref="card" v-bind:id="'circle'+movieID" v-on:click="selectMovie">
+    <div class="flip-card-inner">
+      <div class="flip-card-front">
+        <div class="visible" v-if="isSelected">
+          <font-awesome-icon icon="fa-solid fa-heart" size="2xl" style="color: #43c78d;"/>
+        </div>
+        <img v-bind:id="'img'+movieID" v-bind:src="movie.image">
+      </div>
+      <div class="flip-card-back">
+        <div class="back">
+          <h3>{{movie.originalTitle}} </h3>
+        </div>
+
+      </div>
+
+  </div>
   </div>
 </template>
 
@@ -49,37 +65,18 @@ export default{
     }
   },
   mounted() {
-
-    let url = 'https://api.themoviedb.org/3/find/' + this.movie.tconst +
-        '?api_key=06874088a2d1704a5a7018a3e1d000b3&language=en-US&external_source=imdb_id'
-
-
-    let imageNotFoundurl = 'https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-1-scaled.png'
-    fetch(url)
-        .then(response => response.json())
-        .then(async data => {
-          let selected = store.getters["data/getMoviesSelected"]
-          let urlImage = ''
-          if (data.tv_results[0] != null && data.tv_results[0] != undefined && data.tv_results[0].poster_path) {
-            urlImage = 'https://image.tmdb.org/t/p/original' + data.tv_results[0].poster_path
-          } else if (data.movie_results[0] != null && data.movie_results[0] != undefined && data.movie_results[0].poster_path) {
-            urlImage = 'https://image.tmdb.org/t/p/original' + data.movie_results[0].poster_path
-          } else if (data.person_results[0] != null && data.person_results[0] != undefined && data.person_results[0].poster_path) {
-            urlImage = 'https://image.tmdb.org/t/p/original' + data.person_results[0].poster_path
-          } else if (data.tv_episode_results[0] != null && data.tv_episode_results[0] != undefined && data.tv_episode_results[0].poster_path) {
-            urlImage = 'https://image.tmdb.org/t/p/original' + data.tv_episode_results[0].poster_path
-          } else if (data.tv_season_results[0] != null && data.tv_season_results[0] != undefined && data.tv_season_results[0].poster_path) {
-            urlImage = 'https://image.tmdb.org/t/p/original' + data.tv_season_results[0].poster_path
-          } else {
-            urlImage = imageNotFoundurl;
-          }
-
-          if(selected.includes(this.movie)){
-            this.$data.isSelected=true
-          }
-          document.getElementById("img" + this.movieID).src = urlImage
-          this.CircleSize(this.movie.averageRating)
-        });
+    let selected = store.getters["data/getMoviesSelected"]
+    if(selected.includes(this.movie)){
+      this.$data.isSelected=true
+    }
+    this.CircleSize(this.movie.averageRating)
+  },
+  updated() {
+    let selected = store.getters["data/getMoviesSelected"]
+    if(selected.includes(this.movie)){
+      this.$data.isSelected=true
+    }
+    this.CircleSize(this.movie.averageRating)
   }
 }
 </script>
@@ -88,13 +85,14 @@ export default{
 .flip-card{
   width: 150px;
   height: 150px;
-  border: 2px solid cornflowerblue;
+
   border-radius: 20000000px;
-  background:beige ;
   align-content: center;
   color: #2c3e50;
   margin: 10px 10px 10px 10px;
   position: relative;
+  background-color: transparent;
+  perspective: 1000px;
 }
 img{
   padding: 0 0 0 0 ;
@@ -117,4 +115,45 @@ img{
   -o-transform:scale(1.25);
   transform:scale(1.25);
 }
+
+
+.flip-card-inner {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+  border-radius: 200000px;
+  border: 2px solid cornflowerblue; }
+
+.flip-card-front, .flip-card-back {
+
+  border-radius: 200000px;
+  position: absolute;
+  width: 100%;
+  height: 100%;  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.flip-card-front {
+  background-color: beige;
+  color: black;}
+
+.flip-card-back {
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: beige;
+  color: black;
+  transform: rotateY(180deg);
+
+}
+.back {
+
+}
+
 </style>
