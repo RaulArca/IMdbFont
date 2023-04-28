@@ -22,7 +22,26 @@ If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has a
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
+To can execute this project you must download a docker image following the next steps 
 
+1º Clone the backend repository and open it
+
+```sh
+git clone https://github.com/ChristianGm25/Academy_IMDB_Project
+cd academy_search
+
+```
+download the image
+```sh
+docker pull christiangm25/elasticsearch_indexed:akasIndexed
+```
+realize the docker compose
+```sh
+ docker-compose up --build
+
+```
+
+Now in a new Terminal you should execute te next sentences
 ```sh
 npm install
 ```
@@ -31,10 +50,4 @@ npm install
 
 ```sh
 npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
 ```
